@@ -2,7 +2,7 @@ import jenkins.model.*
 
 def env = System.getenv()
 
-def instance = Jenkins.get()
+def instance = Jenkins.getInstance()
 
 def anchore = instance.getDescriptorByType(com.anchore.jenkins.plugins.anchore.AnchoreBuilder.DescriptorImpl)
 
