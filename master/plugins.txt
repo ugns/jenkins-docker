@@ -7,7 +7,6 @@ command-launcher
 ssh-credentials
 ant
 workflow-support
-windows-slaves
 durable-task
 resource-disposer
 workflow-basic-steps
@@ -26,9 +25,9 @@ workflow-cps
 pipeline-model-declarative-agent
 build-timeout
 junit
+pipeline-githubnotify-step
 workflow-durable-task-step
 docker-workflow
-amazon-ecs
 branch-api
 structs
 pipeline-model-api
@@ -41,9 +40,9 @@ pipeline-stage-view
 workflow-cps-global-lib
 matrix-auth
 pipeline-input-step
+pipeline-github
 workflow-step-api
 credentials
-aws-java-sdk
 workflow-job
 workflow-multibranch
 pipeline-model-definition
@@ -60,13 +59,14 @@ pipeline-graph-analysis
 docker-commons
 jquery-detached
 github-branch-source
+github-issues
 matrix-project
 github-api
 ssh-slaves
 workflow-api
-aws-credentials
 git-client
 authentication-tokens
+aws-lambda
 apache-httpcomponents-client-4-api
 gradle
 scm-api
