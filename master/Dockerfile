@@ -1,6 +1,6 @@
 FROM jenkins/jenkins:lts-alpine
 
-MAINTAINER Jeremy T. Bouse <Jeremy.Bouse@SterlingTS.com>
+MAINTAINER Jeremy T. Bouse <Jeremy.Bouse@UnderGrid.net>
 
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 
