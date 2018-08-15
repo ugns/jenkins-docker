@@ -1,21 +1,24 @@
-import jenkins.*
-import hudson.*
-import hudson.model.*
 import jenkins.model.*
 import hudson.security.*
 
-def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-def adminUsername = System.getenv('JENKINS_ADMIN_USERNAME') ?: 'admin'
-def adminPassword = System.getenv('JENKINS_ADMIN_PASSWORD') ?: 'password'
-hudsonRealm.createAccount(adminUsername, adminPassword)
 
 Jenkins j = Jenkins.getInstance()
-j.setSecurityRealm(hudsonRealm)
-j.save()
 
-def strategy = new ProjectMatrixAuthorizationStrategy()
+if (!(j.getSecurityRealm())) {
+    j.setSecurityRealm(new HudsonPrivateSecurityRealm(false))
+}
 
-// Setting Admin Permissions
-strategy.add(Jenkins.ADMINISTER, adminUsername)
-j.setAuthorizationStrategy(strategy)
+if (!(j.getAuthorizationStrategy())) {
+    j.setAuthorizationStrategy(new ProjectMatrixAuthorizationStrategy())
+}
+
+def adminUsername = System.getenv('JENKINS_ADMIN_USERNAME') ?: 'admin'
+def adminPassword = System.getenv('JENKINS_ADMIN_PASSWORD') ?: 'password'
+def currentUsers = jenkins.getSecurityRealm().getAllUsers().collect { it.getId() }
+if (!(adminUsername in currentUsers)) {
+    def user = j.getSecurityRealm().createAccount(adminUsername, adminPassword)
+    user.save
+    j.getAuthorizationStrategy().add(Jenkins.ADMINISTER, adminUsername)
+}
+
 j.save()
