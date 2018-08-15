@@ -74,3 +74,4 @@ pipeline-stage-step
 pipeline-milestone-step
 cloudbees-folder
 email-ext
+jdk-tool
