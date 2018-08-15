@@ -35,7 +35,7 @@ if(anchore.engineuser != engine_user) {
     anchore.engineuser = engine_user
     save = true
 }
-if(anchore.enginepass != engine_pass) {
+if(anchore.enginepass.toString() != engine_pass) {
     println("Updating Anchore Engine Password")
     anchore.enginepass = Secret.fromString(engine_pass)
     save = true
