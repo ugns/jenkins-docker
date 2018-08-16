@@ -18,9 +18,9 @@ if (j.getAuthorizationStrategy().getClass() == AuthorizationStrategy.Unsecured) 
 
 def adminUsername = System.getenv('JENKINS_ADMIN_USERNAME') ?: 'admin'
 def adminPassword = System.getenv('JENKINS_ADMIN_PASSWORD') ?: 'password'
-def currentUsers = j.getSecurityRealm().getAllUsers().collect { it.getId() }
-if (!(adminUsername in currentUsers)) {
-    if (j.getSecurityRealm().metaClass.respondsTo(j.getSecurityRealm(), 'createAccount', String, String)) {
+if (j.getSecurityRealm().metaClass.respondsTo(j.getSecurityRealm(), 'createAccount', String, String)) {
+  	def currentUsers = j.getSecurityRealm().getAllUsers().collect { it.getId() }
+    if (!(adminUsername in currentUsers)) {
         println("Created administrative user ${adminUsername}")
         def user = j.getSecurityRealm().createAccount(adminUsername, adminPassword)
         user.save
