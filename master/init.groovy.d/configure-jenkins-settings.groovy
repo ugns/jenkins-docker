@@ -12,8 +12,8 @@ import jenkins.model.JenkinsLocationConfiguration
 
 def env = System.getenv()
 
-String frontend_url = env['JENKINS_UI_URL'] ?: 'http://localhost:8080/'
-String admin_email = env['JENKINS_ADMIN']
+String frontend_url = env['JENKINS_URL'] ?: 'http://localhost:8080/'
+String admin_email = env['JENKINS_ADMIN_EMAIL']
 def master_executors = env['JENKINS_MASTER_EXECUTORS'] ?: 2
 
 Jenkins j = Jenkins.instance
@@ -35,6 +35,7 @@ if(j.numExecutors != master_executors.toInteger()) {
     j.numExecutors = master_executors.toInteger()
     save = true
 }
+
 //save configuration to disk
 if(save) {
     j.save()
