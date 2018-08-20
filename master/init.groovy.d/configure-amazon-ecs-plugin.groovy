@@ -4,6 +4,10 @@
 )
 
 import org.yaml.snakeyaml.Yaml
+import com.amazonaws.services.elasticloadbalancing.AmazonElasticLoadBalancingClient
+import com.amazonaws.services.elasticloadbalancing.AmazonElasticLoadBalancingClientBuilder
+import com.amazonaws.services.elasticloadbalancing.model.DescribeLoadBalancersRequest
+import com.amazonaws.services.elasticloadbalancing.model.DescribeLoadBalancersResult
 import com.amazonaws.services.ecs.AmazonECSClient
 import com.amazonaws.services.ecs.AmazonECSClientBuilder
 import com.amazonaws.services.ecs.model.DescribeClustersRequest
@@ -24,16 +28,28 @@ private String getRegion() {
   return EC2MetadataUtils.instanceInfo.region
 }
 
-private String getClusterArn(String clusterName) {
+private String queryClusterArn(String clusterName) {
   AmazonECSClient client = AmazonECSClientBuilder.standard().build()
   DescribeClustersRequest request = new DescribeClustersRequest().withClusters(clusterName)
-  DescribeClustersResult response = client.describeClusters(request)
-  if ((cluster = response.getClusters()[0])) {
+  DescribeClustersResult result = client.describeClusters(request)
+  if ((cluster = result.getClusters().first())) {
     return cluster.getClusterArn()
   }
   else {
     Logger.global.info("Unable to locate ECS Cluster ${clusterName}")
   }
+}
+
+private String queryTunnel(String elbName) {
+	AmazonElasticLoadBalancingClient client = new AmazonElasticLoadBalancingClientBuilder().standard().build()
+  DescribeLoadBalancersRequest request = new DescribeLoadBalancersRequest().withLoadBalancerNames(elbName);
+  DescribeLoadBalancersResult result = client.describeLoadBalancers(request);
+  if ((elb = result.getLoadBalancerDescriptions().first())) {
+    return "${elb.DNSName}:50000"
+  }
+	else {
+  	Logger.global.info("Unable to locate ELB ${elbName}")
+	}
 }
 
 private MountPointEntry createMountPoint(String name, String sourcePath, String containerPath, Boolean readOnly = false) {
@@ -85,13 +101,13 @@ private void configureCloud() {
               name = cloud.name,
               templates = templates,
               credentialsId = '',
-              cluster = getClusterArn(cloud.cluster),
+              cluster = queryClusterArn(cloud.cluster),
               regionName = region,
               jenkinsUrl = '',
               slaveTimoutInSeconds = -1
       )
       if (cloud.tunnel) {
-        ecsCloud.tunnel = cloud.tunnel
+        ecsCloud.tunnel = queryTunnel(cloud.tunnel)
       }
       Jenkins.instance.clouds.add(ecsCloud)
     }
